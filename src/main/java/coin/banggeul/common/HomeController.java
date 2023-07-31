@@ -16,7 +16,7 @@ public class HomeController {
 
     @GetMapping("/")
     public BasicResponse<String> home() {
-        return ResponseUtil.success("This is home for Banggeul");
+        return ResponseUtil.success("This is home for Banggeul.");
     }
 
     @GetMapping("/health")
