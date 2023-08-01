@@ -9,6 +9,7 @@ import coin.banggeul.property.openapi.apt.OpenApiResponseApt;
 import coin.banggeul.property.openapi.other.OpenApiResponseOther;
 import coin.banggeul.property.openapi.other.OtherItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -24,16 +25,8 @@ import java.util.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PriceService {
-
-    public PriceService(RestTemplate restTemplate) {
-        Map<String, String> tagNames = new HashMap<>();
-        tagNames.put("보증금액", "deposit");
-        tagNames.put("월세금액", "monthlyRent");
-        tagNames.put("전용면적", "area");
-
-        this.restTemplate = restTemplate;
-    }
 
     @Value("${open.key}")
     private String key;
@@ -41,68 +34,24 @@ public class PriceService {
     private final RestTemplate restTemplate;
 
     @Transactional
-    public String getAptPrice(RentalType rentalType, RoomType roomType, String code, String date) throws IOException {
-        String s = getResponse(
-                "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent",
-                code, date
-        );
-        assert s != null;
-        log.info("test: {}", s);
-        List<AptItem> items = null;
-        if (roomType.equals(RoomType.APT)) {
-            items = parseAptJson(getResponse(
-                    "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptRent",
-                    code, date
-            ));
-        } else {
-            throw new PropertyException(PropertyErrorCode.ROOM_TYPE_NOT_FOUND);
-        }
-
-        if (rentalType == RentalType.LUMPSUM)
-            return String.format("%.2f", items.stream()
-                    .filter(i -> i.getMonthlyRent() == 0)
-                    .mapToLong(i -> Long.parseLong(i.getDeposit().replace(",", ""))).average().getAsDouble());
-        else
-            return String.format("%.2f", items.stream()
-                    .filter(i -> i.getMonthlyRent() != 0)
-                    .mapToLong(AptItem::getMonthlyRent).average().getAsDouble());
+    public String getAptPrice(RentalType rentalType, String code, String date) throws IOException {
+        String aptUrl = "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptRent";
+        List<AptItem> items =  parseAptJson(getResponse(aptUrl, code, date));
+        return getAptAverage(rentalType, items);
     }
 
     @Transactional
-    public String getOfficetelPrice(RentalType rentalType, RoomType roomType, String code, String date) throws IOException {
-        List<OtherItem> items = null;
-
-        if (roomType.equals(RoomType.OFFICE)) {
-            items = parseOtherJson(getResponse(
-                    "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent",
-                    code, date
-            ));
-        } else {
-            throw new PropertyException(PropertyErrorCode.ROOM_TYPE_NOT_FOUND);
-        }
-
+    public String getOfficetelPrice(RentalType rentalType, String code, String date) throws IOException {
+        String officetelUrl = "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent";
+        List<OtherItem> items = parseOtherJson(getResponse(officetelUrl, code, date));
         return getAverage(rentalType, items);
 
     }
 
     @Transactional
-    public String getPrice(RentalType rentalType, RoomType roomType, String code, String date) throws IOException {
-        String s = getResponse(
-                "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent",
-                code, date
-        );
-        assert s != null;
-        log.info("test: {}", s);
-        List<OtherItem> items = null;
-        if (roomType.equals(RoomType.VILLA) || roomType.equals(RoomType.ONEROOM)) {
-            items = parseOtherJson(getResponse(
-                    "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcRHRent",
-                    code, date
-            ));
-        }  else {
-            throw new PropertyException(PropertyErrorCode.ROOM_TYPE_NOT_FOUND);
-        }
-
+    public String getPrice(RentalType rentalType, String code, String date) throws IOException {
+        String otherUrl = "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcRHRent";
+        List<OtherItem> items  = parseOtherJson(getResponse(otherUrl, code, date));
         return getAverage(rentalType, items);
     }
 
@@ -117,11 +66,21 @@ public class PriceService {
                     .mapToLong(OtherItem::getMonthlyRent).average().getAsDouble());
     }
 
+    private String getAptAverage(RentalType rentalType, List<AptItem> items) {
+        if (rentalType == RentalType.LUMPSUM)
+            return String.format("%.2f", items.stream()
+                    .filter(i -> i.getMonthlyRent() == 0)
+                    .mapToLong(i -> Long.parseLong(i.getDeposit().replace(",", ""))).average().getAsDouble());
+        else
+            return String.format("%.2f", items.stream()
+                    .filter(i -> i.getMonthlyRent() != 0)
+                    .mapToLong(AptItem::getMonthlyRent).average().getAsDouble());
+    }
+
     private String getResponse(String url, String code, String date) {
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-
 
         URI uri = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("LAWD_CD", code)
