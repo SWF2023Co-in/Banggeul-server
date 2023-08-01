@@ -2,7 +2,6 @@ package coin.banggeul.member;
 
 import coin.banggeul.auth.domain.LoginService;
 import coin.banggeul.auth.service.JwtService;
-import coin.banggeul.common.AppProperties;
 import coin.banggeul.common.response.BasicResponse;
 import coin.banggeul.common.response.ResponseUtil;
 import coin.banggeul.member.dto.AuthInfo;
