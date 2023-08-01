@@ -69,6 +69,23 @@ public class PriceService {
     }
 
     @Transactional
+    public String getOfficetelPrice(RentalType rentalType, RoomType roomType, String code, String date) throws IOException {
+        List<OtherItem> items = null;
+
+        if (roomType.equals(RoomType.OFFICE)) {
+            items = parseOtherJson(getResponse(
+                    "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent",
+                    code, date
+            ));
+        } else {
+            throw new PropertyException(PropertyErrorCode.ROOM_TYPE_NOT_FOUND);
+        }
+
+        return getAverage(rentalType, items);
+
+    }
+
+    @Transactional
     public String getPrice(RentalType rentalType, RoomType roomType, String code, String date) throws IOException {
         String s = getResponse(
                 "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent",
@@ -77,12 +94,7 @@ public class PriceService {
         assert s != null;
         log.info("test: {}", s);
         List<OtherItem> items = null;
-        if (roomType.equals(RoomType.OFFICE)) {
-            items = parseOtherJson(getResponse(
-                    "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent",
-                    code, date
-            ));
-        } else if (roomType.equals(RoomType.VILLA) || roomType.equals(RoomType.ONEROOM)) {
+        if (roomType.equals(RoomType.VILLA) || roomType.equals(RoomType.ONEROOM)) {
             items = parseOtherJson(getResponse(
                     "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcRHRent",
                     code, date
@@ -91,6 +103,10 @@ public class PriceService {
             throw new PropertyException(PropertyErrorCode.ROOM_TYPE_NOT_FOUND);
         }
 
+        return getAverage(rentalType, items);
+    }
+
+    private String getAverage(RentalType rentalType, List<OtherItem> items) {
         if (rentalType == RentalType.LUMPSUM)
             return String.format("%.2f", items.stream()
                     .filter(i -> i.getMonthlyRent() == 0)
