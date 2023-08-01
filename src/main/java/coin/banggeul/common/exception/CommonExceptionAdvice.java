@@ -6,6 +6,7 @@ import coin.banggeul.auth.exception.S3Exception;
 import coin.banggeul.common.response.BasicResponse;
 import coin.banggeul.common.response.ErrorEntity;
 import coin.banggeul.common.response.ResponseUtil;
+import coin.banggeul.member.exception.MemberException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -30,6 +31,13 @@ public class CommonExceptionAdvice extends RuntimeException{
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BasicResponse<ErrorEntity> providerException(ProviderException ex) {
         log.error("Provider Exception[{}]: {}", ex.getErrorCode().toString(), ex.getErrorMessage());
+        return ResponseUtil.error(new ErrorEntity(ex.getErrorCode().toString(), ex.getErrorMessage()));
+    }
+
+    @ExceptionHandler(MemberException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public BasicResponse<ErrorEntity> memberException(MemberException ex) {
+        log.error("Member Exception[{}]: {}", ex.getErrorCode().toString(), ex.getErrorMessage());
         return ResponseUtil.error(new ErrorEntity(ex.getErrorCode().toString(), ex.getErrorMessage()));
     }
 

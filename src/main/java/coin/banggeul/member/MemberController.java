@@ -17,8 +17,6 @@ public class MemberController {
 
     private final LoginService loginService;
     private final JwtService jwtService;
-    private final AppProperties appProperties;
-    public final static String REFRESH_TOKEN = "refresh_token";
 
     @ResponseBody
     @GetMapping("/login/kakao")
