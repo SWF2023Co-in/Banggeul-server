@@ -1,7 +1,7 @@
 package coin.banggeul.property.service;
 
-import coin.banggeul.common.EnumErrorCode;
-import coin.banggeul.common.EnumException;
+import coin.banggeul.common.exception.EnumErrorCode;
+import coin.banggeul.common.exception.EnumException;
 import coin.banggeul.common.YesNo;
 import coin.banggeul.member.domain.Member;
 import coin.banggeul.property.domain.*;

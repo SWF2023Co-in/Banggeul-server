@@ -1,22 +1,22 @@
-package coin.banggeul.common;
+package coin.banggeul.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class DtoValidException extends RuntimeException{
+public class EnumException extends RuntimeException{
 
-    private DtoValidErrorCode errorCode;
+    private EnumErrorCode errorCode;
     private String errorMessage;
 
-    public DtoValidException(DtoValidErrorCode errorCode) {
+    public EnumException(EnumErrorCode errorCode) {
         super(errorCode.getDefaultMessage());
         this.errorCode = errorCode;
         this.errorMessage = errorCode.getDefaultMessage();
     }
 
-    public DtoValidException(String message, DtoValidErrorCode errorCode) {
+    public EnumException(String message, EnumErrorCode errorCode) {
         super(message);
         this.errorCode = errorCode;
         this.errorMessage = message;

@@ -1,4 +1,4 @@
-package coin.banggeul.common;
+package coin.banggeul.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

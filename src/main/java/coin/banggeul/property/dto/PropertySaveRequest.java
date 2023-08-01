@@ -106,26 +106,6 @@ public class PropertySaveRequest {
 
     private List<PropertyImageSaveDto> images;
 
-    /**
-     * Member landlord,
-     *                     RentalType rentalType,
-     *                     Address address,
-     *                     RoomType roomType,
-     *                     Double area,
-     *                     Long rentalFee,
-     *                     Long maintenanceFee,
-     *                     NSEW direction,
-     *                     OS structure,
-     *                     Long deposit,
-     *                     String message,
-     *                     Others others,
-     *                     LocalDate movingInDate,
-     *                     String roomFloor,
-     *                     String buildingFloor,
-     *                     OptionValue options,
-     *                     DocumentRegistrationYn documentYn
-     * */
-
     public static Property toEntity(RentalType rentalType,
                                     RoomType roomType,
                                     Address address,

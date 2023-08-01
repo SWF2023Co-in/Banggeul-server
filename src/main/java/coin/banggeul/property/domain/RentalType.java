@@ -1,6 +1,6 @@
 package coin.banggeul.property.domain;
 
-import coin.banggeul.common.EnumException;
+import coin.banggeul.common.exception.EnumException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 
-import static coin.banggeul.common.EnumErrorCode.ENUM_INVALID_STRING;
+import static coin.banggeul.common.exception.EnumErrorCode.ENUM_INVALID_STRING;
 
 
 @Getter

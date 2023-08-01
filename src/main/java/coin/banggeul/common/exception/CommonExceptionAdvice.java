@@ -1,4 +1,4 @@
-package coin.banggeul.common;
+package coin.banggeul.common.exception;
 
 import coin.banggeul.auth.exception.AuthException;
 import coin.banggeul.auth.exception.ProviderException;
