@@ -19,10 +19,10 @@ public class PropertyResponse {
     private String roadNameAddress;
     private String lotNumberAddress;
     private Double area;
-    private Long price;
-    private Long maintenanceFee;
+    private Double price;
+    private Double maintenanceFee;
     private String direction;
-    private Long deposit;
+    private Double deposit;
     private String message;
 
     private String loan;
@@ -33,7 +33,9 @@ public class PropertyResponse {
     private OptionResponse options;
     private List<String> tags;
 
-    public static PropertyResponse getResponse(Property property, List<String> tags) {
+    private String average;
+
+    public static PropertyResponse getResponse(Property property, List<String> tags, String average) {
 
         return new PropertyResponse(
                 property.getId(),
@@ -51,7 +53,8 @@ public class PropertyResponse {
                 property.getOthers().getParking().getCode(),
                 property.getOthers().getElevator().getCode(),
                 OptionResponse.toResponse(property.getOptions()),
-                tags
+                tags,
+                average
         );
 
     }

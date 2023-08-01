@@ -37,7 +37,11 @@ public class S3Service {
 
     @Transactional
     public void saveImages(Property property, List<PropertyImageSaveDto> meta, List<MultipartFile> files) {
+        log.info("meta size: {}, multipart file size: {}", meta.size(), files.size());
+        if (meta.size() == 0)
+            return;
         for (MultipartFile file: files) {
+            log.info("file name: {}", file.getOriginalFilename());
             PropertyImageSaveDto saveDto = meta.stream().filter(dto -> dto.getFileName().equals(file.getOriginalFilename())).findFirst()
                     .orElseThrow(() -> new S3Exception(S3ErrorCode.IMAGE_FILE_NAME_NOT_MATCHED));
             String url = uploadImage(file);

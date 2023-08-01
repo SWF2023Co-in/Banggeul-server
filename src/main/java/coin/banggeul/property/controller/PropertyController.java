@@ -7,16 +7,17 @@ import coin.banggeul.property.domain.Property;
 import coin.banggeul.property.dto.PropertyListResponseDto;
 import coin.banggeul.property.dto.PropertyResponse;
 import coin.banggeul.property.dto.PropertySaveRequest;
+import coin.banggeul.property.service.PriceService;
 import coin.banggeul.property.service.PropertyService;
 import coin.banggeul.property.service.S3Service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class PropertyController {
-
     private final PropertyService propertyService;
     private final MemberService memberService;
     private final S3Service s3Service;
@@ -45,9 +45,10 @@ public class PropertyController {
     }
 
     @GetMapping("/info")
-    public BasicResponse<PropertyResponse> getPropertyInfo(@RequestParam Long id) {
+    public BasicResponse<PropertyResponse> getPropertyInfo(@RequestParam Long id) throws IOException, SAXException {
+        PropertyResponse propertyInfo = propertyService.getPropertyInfo(id);
 
-        return ResponseUtil.success(propertyService.getPropertyInfo(id));
+        return ResponseUtil.success(propertyInfo);
         // TODO: 부동산 시세 연결해서 합치기
     }
 }

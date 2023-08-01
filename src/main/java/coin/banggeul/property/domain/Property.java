@@ -35,8 +35,8 @@ public class Property extends BaseTimeEntity {
     @Column(name = "property_area")
     private Double area;
 
-    private Long rentalFee;
-    private Long maintenanceFee;
+    private Double rentalFee;
+    private Double maintenanceFee;
 
     @Enumerated(EnumType.STRING)
     private NSEW direction;
@@ -44,7 +44,7 @@ public class Property extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private OS structure;
 
-    private Long deposit;
+    private Double deposit;
 
     private String message;
 
@@ -68,11 +68,11 @@ public class Property extends BaseTimeEntity {
                     Address address,
                     RoomType roomType,
                     Double area,
-                    Long rentalFee,
-                    Long maintenanceFee,
+                    Double rentalFee,
+                    Double maintenanceFee,
                     NSEW direction,
                     OS structure,
-                    Long deposit,
+                    Double deposit,
                     String message,
                     Others others,
                     LocalDate movingInDate,
