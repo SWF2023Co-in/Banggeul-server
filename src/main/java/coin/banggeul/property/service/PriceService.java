@@ -1,9 +1,6 @@
 package coin.banggeul.property.service;
 
 import coin.banggeul.property.domain.RentalType;
-import coin.banggeul.property.domain.RoomType;
-import coin.banggeul.property.exception.PropertyErrorCode;
-import coin.banggeul.property.exception.PropertyException;
 import coin.banggeul.property.openapi.apt.AptItem;
 import coin.banggeul.property.openapi.apt.OpenApiResponseApt;
 import coin.banggeul.property.openapi.other.OpenApiResponseOther;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -30,27 +26,29 @@ public class PriceService {
 
     @Value("${open.key}")
     private String key;
-
+    @Value("${open.url.apt}")
+    private String aptUrl;
+    @Value("${open.url.officetel}")
+    private String officetelUrl;
+    @Value("${open.url.other}")
+    private String otherUrl;
     private final RestTemplate restTemplate;
+    private final ObjectMapper mapper;
 
     @Transactional
     public String getAptPrice(RentalType rentalType, String code, String date) throws IOException {
-        String aptUrl = "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptRent";
         List<AptItem> items =  parseAptJson(getResponse(aptUrl, code, date));
         return getAptAverage(rentalType, items);
     }
 
     @Transactional
     public String getOfficetelPrice(RentalType rentalType, String code, String date) throws IOException {
-        String officetelUrl = "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent";
         List<OtherItem> items = parseOtherJson(getResponse(officetelUrl, code, date));
         return getAverage(rentalType, items);
-
     }
 
     @Transactional
     public String getPrice(RentalType rentalType, String code, String date) throws IOException {
-        String otherUrl = "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcRHRent";
         List<OtherItem> items  = parseOtherJson(getResponse(otherUrl, code, date));
         return getAverage(rentalType, items);
     }
@@ -79,9 +77,6 @@ public class PriceService {
 
     private String getResponse(String url, String code, String date) {
 
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-
         URI uri = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("LAWD_CD", code)
                 .queryParam("DEAL_YMD", date)
@@ -102,15 +97,13 @@ public class PriceService {
         return null;
     }
 
-    public List<AptItem> parseAptJson(String text) throws IOException{
-        ObjectMapper mapper = new ObjectMapper();
+    private List<AptItem> parseAptJson(String text) throws IOException{
         OpenApiResponseApt value = mapper.readValue(text, OpenApiResponseApt.class);
         log.info(value.getResponse().getHeader().getResultMsg());
         return value.getResponse().getBody().getItems().getItem();
     }
 
-    public List<OtherItem> parseOtherJson(String text) throws IOException{
-        ObjectMapper mapper = new ObjectMapper();
+    private List<OtherItem> parseOtherJson(String text) throws IOException{
         OpenApiResponseOther value = mapper.readValue(text, OpenApiResponseOther.class);
         log.info(value.getResponse().getHeader().getResultMsg());
         return value.getResponse().getBody().getItems().getItem();

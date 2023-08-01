@@ -31,17 +31,13 @@ public class PropertyService {
     private final PropertyRepository propertyRepository;
     private final TagRepository tagRepository;
     private final PropertyImageRepository propertyImageRepository;
-
     private final PriceService priceService;
 
     @Transactional
     public Property registerProperty(Member landlord, PropertySaveRequest dto) {
         Property property = propertyRepository.save(getPropertyWithLandlord(landlord, dto));
-        for (String tag : dto.getTags()) {
-            tagRepository.save(new Tag(tag, property));
-        }
+        dto.getTags().forEach(tag -> tagRepository.save(new Tag(tag, property)));
         return property;
-
     }
 
     @Transactional
@@ -56,7 +52,7 @@ public class PropertyService {
 
         //정렬: recent(내림차순), price(오름차순), area(오름차순)
         if (sortBy.equals("recent"))
-            propertyList.sort((a,b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
+            propertyList.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
         else if (sortBy.equals("price"))
             propertyList.sort(Comparator.comparing(Property::getRentalFee));
         else if (sortBy.equals("area"))
@@ -64,16 +60,7 @@ public class PropertyService {
         else
             throw new EnumException(EnumErrorCode.ENUM_INVALID_STRING);
 
-        PropertyListResponseDto response = new PropertyListResponseDto((long) propertyList.size());
-
-        // dto 변환
-        for (Property property : propertyList) {
-            List<String> tags = tagRepository.findAllByProperty(property).stream().map(Tag::getName).collect(Collectors.toList());
-            PropertyImage thumbnail = propertyImageRepository.findThumbnail(property)
-                    .orElseThrow(() -> new PropertyException(PropertyErrorCode.THUMBNAIL_NOT_FOUND));
-            response.getProperties().add(PropertyResponseInList.toDto(property, tags, thumbnail.getUrl()));
-        }
-        return response;
+        return getPropertyListResponseDto(propertyList);
     }
 
     @Transactional
@@ -149,4 +136,18 @@ public class PropertyService {
                 landlord
         );
     }
+
+    private PropertyListResponseDto getPropertyListResponseDto(List<Property> propertyList) {
+        PropertyListResponseDto response = new PropertyListResponseDto((long) propertyList.size());
+
+        // dto 변환
+        for (Property property : propertyList) {
+            List<String> tags = tagRepository.findAllByProperty(property).stream().map(Tag::getName).collect(Collectors.toList());
+            PropertyImage thumbnail = propertyImageRepository.findThumbnail(property)
+                    .orElseThrow(() -> new PropertyException(PropertyErrorCode.THUMBNAIL_NOT_FOUND));
+            response.getProperties().add(PropertyResponseInList.toDto(property, tags, thumbnail.getUrl()));
+        }
+        return response;
+    }
+
 }
