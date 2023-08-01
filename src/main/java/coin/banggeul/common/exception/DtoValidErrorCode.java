@@ -1,4 +1,4 @@
-package coin.banggeul.common;
+package coin.banggeul.common.exception;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
