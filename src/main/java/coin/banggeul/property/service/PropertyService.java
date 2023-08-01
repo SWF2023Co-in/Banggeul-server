@@ -37,9 +37,7 @@ public class PropertyService {
     @Transactional
     public Property registerProperty(Member landlord, PropertySaveRequest dto) {
         Property property = propertyRepository.save(getPropertyWithLandlord(landlord, dto));
-        for (String tag : dto.getTags()) {
-            tagRepository.save(new Tag(tag, property));
-        }
+        dto.getTags().forEach(tag -> tagRepository.save(new Tag(tag, property)));
         return property;
 
     }
