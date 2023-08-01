@@ -40,10 +40,6 @@ public class PriceService {
 
     private final RestTemplate restTemplate;
 
-    // 시세 가져오기 getPrice
-    // 칼럼명 영어로 바꾸기
-    // 현재 연월 가져와서 입력
-    // 전월세 필터, 면적 필터(오차범위)
     @Transactional
     public String getAptPrice(RentalType rentalType, RoomType roomType, String code, String date) throws IOException {
         String s = getResponse(
@@ -61,10 +57,7 @@ public class PriceService {
         } else {
             throw new PropertyException(PropertyErrorCode.ROOM_TYPE_NOT_FOUND);
         }
-        //응답 string으로 가져와서 파싱해서 필요한 정보만 저장한 객체 리스트 반환
-        // 조건에 맞게 필터링해서 리스트로 collect
-        // 남은 원소들의 price average
-        //(result.stream().map(Item::getMonthlyRent).toList());
+
         if (rentalType == RentalType.LUMPSUM)
             return String.format("%.2f", items.stream()
                     .filter(i -> i.getMonthlyRent() == 0)
@@ -147,38 +140,4 @@ public class PriceService {
         log.info(value.getResponse().getHeader().getResultMsg());
         return value.getResponse().getBody().getItems().getItem();
     }
-
-/**
-    public List<Item> parse(String text) throws IOException, SAXException {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
-        try {
-            builder = documentBuilderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        ArrayList<Item> itemList = new ArrayList<>();
-        Document doc =  builder.parse(new InputSource(new StringReader(text)));
-        NodeList items = doc.getElementsByTagName("items");
-        for (Node item = items.item(0).getFirstChild(); item != null; item.getNextSibling()) {
-            Long deposit = null;
-            Long monthlyRent = null;
-            Double area = null;
-            if (item.getNodeName().equals("보증금액")) {
-                deposit = Long.parseLong(item.getFirstChild().toString());
-            }
-            if (item.getNodeName().equals("월세금액")) {
-                monthlyRent = Long.parseLong(item.getFirstChild().toString());
-            }
-            if (item.getNodeName().equals("전용면적")) {
-                area = Double.parseDouble(item.getFirstChild().toString());
-            }
-            Item element = new Item(deposit, monthlyRent, area);
-            itemList.add(element);
-            log.info("하나의 항목: " + element);
-        }
-
-        return itemList;
-    }
- */
 }
