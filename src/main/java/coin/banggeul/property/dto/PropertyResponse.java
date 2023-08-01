@@ -33,7 +33,9 @@ public class PropertyResponse {
     private OptionResponse options;
     private List<String> tags;
 
-    public static PropertyResponse getResponse(Property property, List<String> tags) {
+    private String average;
+
+    public static PropertyResponse getResponse(Property property, List<String> tags, String average) {
 
         return new PropertyResponse(
                 property.getId(),
@@ -51,7 +53,8 @@ public class PropertyResponse {
                 property.getOthers().getParking().getCode(),
                 property.getOthers().getElevator().getCode(),
                 OptionResponse.toResponse(property.getOptions()),
-                tags
+                tags,
+                average
         );
 
     }

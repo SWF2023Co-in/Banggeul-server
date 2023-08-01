@@ -1,6 +1,5 @@
 package coin.banggeul.property.service;
 
-import coin.banggeul.common.BaseTimeEntity;
 import coin.banggeul.common.EnumErrorCode;
 import coin.banggeul.common.EnumException;
 import coin.banggeul.common.YesNo;
@@ -17,9 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.SAXException;
 
-import java.time.LocalDate;
-import java.util.Collections;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +32,8 @@ public class PropertyService {
     private final PropertyRepository propertyRepository;
     private final TagRepository tagRepository;
     private final PropertyImageRepository propertyImageRepository;
+
+    private final PriceService priceService;
 
     /**
      * Member landlord,
@@ -97,13 +98,29 @@ public class PropertyService {
     }
 
     @Transactional
-    public PropertyResponse getPropertyInfo(Long propertyId) {
+    public PropertyResponse getPropertyInfo(Long propertyId) throws IOException{
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new PropertyException(PropertyErrorCode.PROPERTY_NOT_FOUND));
         List<String> tags = tagRepository.findAllByProperty(property).stream()
                 .map(Tag::getName)
                 .collect(Collectors.toList());
-        return PropertyResponse.getResponse(property, tags);
+        String average = "";
+        if (property.getRoomType() == RoomType.APT) {
+            average = priceService.getAptPrice(
+                    property.getRentalType(),
+                    property.getRoomType(),
+                    property.getAddress().getBcode().substring(0, 5), "202307"
+            );
+        }
+        else {
+            average = priceService.getPrice(
+                    property.getRentalType(),
+                    property.getRoomType(),
+                    property.getAddress().getBcode().substring(0, 5), "202307"
+            );
+        }
+
+        return PropertyResponse.getResponse(property, tags, average);
     }
 
     private Property getPropertyWithLandlord(Member landlord, PropertySaveRequest dto) {
