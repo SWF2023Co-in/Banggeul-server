@@ -7,6 +7,7 @@ import coin.banggeul.common.response.BasicResponse;
 import coin.banggeul.common.response.ErrorEntity;
 import coin.banggeul.common.response.ResponseUtil;
 import coin.banggeul.member.exception.MemberException;
+import coin.banggeul.property.exception.PropertyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -34,10 +35,24 @@ public class CommonExceptionAdvice extends RuntimeException{
         return ResponseUtil.error(new ErrorEntity(ex.getErrorCode().toString(), ex.getErrorMessage()));
     }
 
+    @ExceptionHandler(EnumException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BasicResponse<ErrorEntity> enumException(EnumException ex) {
+        log.error("Enum Exception[{}]: {}", ex.getErrorCode().toString(), ex.getErrorMessage());
+        return ResponseUtil.error(new ErrorEntity(ex.getErrorCode().toString(), ex.getErrorMessage()));
+    }
+
     @ExceptionHandler(MemberException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BasicResponse<ErrorEntity> memberException(MemberException ex) {
         log.error("Member Exception[{}]: {}", ex.getErrorCode().toString(), ex.getErrorMessage());
+        return ResponseUtil.error(new ErrorEntity(ex.getErrorCode().toString(), ex.getErrorMessage()));
+    }
+
+    @ExceptionHandler(PropertyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BasicResponse<ErrorEntity> propertyException(PropertyException ex) {
+        log.error("Property Exception[{}]: {}", ex.getErrorCode().toString(), ex.getErrorMessage());
         return ResponseUtil.error(new ErrorEntity(ex.getErrorCode().toString(), ex.getErrorMessage()));
     }
 
