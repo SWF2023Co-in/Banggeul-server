@@ -30,8 +30,8 @@ public class PriceService {
 
     @Value("${open.key}")
     private String key;
-
     private final RestTemplate restTemplate;
+    private final ObjectMapper mapper;
 
     @Transactional
     public String getAptPrice(RentalType rentalType, String code, String date) throws IOException {
@@ -102,15 +102,13 @@ public class PriceService {
         return null;
     }
 
-    public List<AptItem> parseAptJson(String text) throws IOException{
-        ObjectMapper mapper = new ObjectMapper();
+    private List<AptItem> parseAptJson(String text) throws IOException{
         OpenApiResponseApt value = mapper.readValue(text, OpenApiResponseApt.class);
         log.info(value.getResponse().getHeader().getResultMsg());
         return value.getResponse().getBody().getItems().getItem();
     }
 
-    public List<OtherItem> parseOtherJson(String text) throws IOException{
-        ObjectMapper mapper = new ObjectMapper();
+    private List<OtherItem> parseOtherJson(String text) throws IOException{
         OpenApiResponseOther value = mapper.readValue(text, OpenApiResponseOther.class);
         log.info(value.getResponse().getHeader().getResultMsg());
         return value.getResponse().getBody().getItems().getItem();

@@ -54,7 +54,7 @@ public class PropertyService {
 
         //정렬: recent(내림차순), price(오름차순), area(오름차순)
         if (sortBy.equals("recent"))
-            propertyList.sort((a,b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
+            propertyList.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
         else if (sortBy.equals("price"))
             propertyList.sort(Comparator.comparing(Property::getRentalFee));
         else if (sortBy.equals("area"))
