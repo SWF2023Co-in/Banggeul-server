@@ -30,19 +30,23 @@ public class PriceService {
 
     @Value("${open.key}")
     private String key;
+    @Value("${open.url.apt}")
+    private String aptUrl;
+    @Value("${open.url.officetel}")
+    private String officetelUrl;
+    @Value("${open.url.other}")
+    private String otherUrl;
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
 
     @Transactional
     public String getAptPrice(RentalType rentalType, String code, String date) throws IOException {
-        String aptUrl = "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptRent";
         List<AptItem> items =  parseAptJson(getResponse(aptUrl, code, date));
         return getAptAverage(rentalType, items);
     }
 
     @Transactional
     public String getOfficetelPrice(RentalType rentalType, String code, String date) throws IOException {
-        String officetelUrl = "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcOffiRent";
         List<OtherItem> items = parseOtherJson(getResponse(officetelUrl, code, date));
         return getAverage(rentalType, items);
 
@@ -50,7 +54,6 @@ public class PriceService {
 
     @Transactional
     public String getPrice(RentalType rentalType, String code, String date) throws IOException {
-        String otherUrl = "http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcRHRent";
         List<OtherItem> items  = parseOtherJson(getResponse(otherUrl, code, date));
         return getAverage(rentalType, items);
     }
