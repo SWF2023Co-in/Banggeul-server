@@ -15,8 +15,8 @@ public class PropertyResponseInList {
     private List<String> tags;
     private String thumbnail;
     private String rentalType;
-    private Long deposit;
-    private Long rentalFee;
+    private Double deposit;
+    private Double rentalFee;
     private Double area;
     private Long roomFloor;
     private String roadNameAddress;

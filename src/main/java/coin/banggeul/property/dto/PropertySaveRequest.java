@@ -34,16 +34,16 @@ public class PropertySaveRequest {
 
     // STEP 2
     @NotNull
-    private Long deposit;
+    private Double deposit;
     @NotNull
-    private Long rentalFee;
+    private Double rentalFee;
     @NotBlank
     private String structure;
     @NotBlank
     private String direction;
 
     @NotNull
-    private Long maintenanceFee;
+    private Double maintenanceFee;
     @NotBlank
     private String electricity;
     @NotBlank
@@ -130,11 +130,11 @@ public class PropertySaveRequest {
                                     RoomType roomType,
                                     Address address,
                                     Double area,
-                                    Long rentalFee,
-                                    Long maintenanceFee,
+                                    Double rentalFee,
+                                    Double maintenanceFee,
                                     NSEW direction,
                                     OS structure,
-                                    Long deposit,
+                                    Double deposit,
                                     String message,
                                     Others others,
                                     LocalDate movingInDate,

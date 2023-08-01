@@ -19,10 +19,10 @@ public class PropertyResponse {
     private String roadNameAddress;
     private String lotNumberAddress;
     private Double area;
-    private Long price;
-    private Long maintenanceFee;
+    private Double price;
+    private Double maintenanceFee;
     private String direction;
-    private Long deposit;
+    private Double deposit;
     private String message;
 
     private String loan;

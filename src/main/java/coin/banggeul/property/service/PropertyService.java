@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -34,26 +33,6 @@ public class PropertyService {
     private final PropertyImageRepository propertyImageRepository;
 
     private final PriceService priceService;
-
-    /**
-     * Member landlord,
-     *                     RentalType rentalType,
-     *                     RoomType roomType,
-     *                     Address address,
-     *                     Long area,
-     *                     Long rentalFee,
-     *                     Long maintenanceFee,
-     *                     NSEW direction,
-     *                     OS structure,
-     *                     Long deposit,
-     *                     String message,
-     *                     Others others,
-     *                     LocalDate movingInDate,
-     *                     String roomFloor,
-     *                     String buildingFloor,
-     *                     OptionValue options,
-     *                     DocumentRegistrationYn documentYn
-     * */
 
     @Transactional
     public Property registerProperty(Member landlord, PropertySaveRequest dto) {
