@@ -83,20 +83,26 @@ public class PropertyService {
         List<String> tags = tagRepository.findAllByProperty(property).stream()
                 .map(Tag::getName)
                 .collect(Collectors.toList());
-        String average = "";
+        String average;
+
         if (property.getRoomType() == RoomType.APT) {
             average = priceService.getAptPrice(
                     property.getRentalType(),
-                    property.getRoomType(),
                     property.getAddress().getBcode().substring(0, 5), "202307"
             );
         }
-        else {
-            average = priceService.getPrice(
+        else if (property.getRoomType() == RoomType.OFFICE){
+            average = priceService.getOfficetelPrice(
                     property.getRentalType(),
-                    property.getRoomType(),
                     property.getAddress().getBcode().substring(0, 5), "202307"
             );
+        } else if (property.getRoomType().equals(RoomType.VILLA) || property.getRoomType().equals(RoomType.ONEROOM)){
+            average = priceService.getPrice(
+                    property.getRentalType(),
+                    property.getAddress().getBcode().substring(0, 5), "202307"
+            );
+        } else {
+            throw new PropertyException(PropertyErrorCode.ROOM_TYPE_NOT_FOUND);
         }
 
         return PropertyResponse.getResponse(property, tags, average);
