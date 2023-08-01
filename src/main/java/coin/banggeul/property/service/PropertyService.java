@@ -31,7 +31,6 @@ public class PropertyService {
     private final PropertyRepository propertyRepository;
     private final TagRepository tagRepository;
     private final PropertyImageRepository propertyImageRepository;
-
     private final PriceService priceService;
 
     @Transactional
@@ -39,7 +38,6 @@ public class PropertyService {
         Property property = propertyRepository.save(getPropertyWithLandlord(landlord, dto));
         dto.getTags().forEach(tag -> tagRepository.save(new Tag(tag, property)));
         return property;
-
     }
 
     @Transactional
@@ -62,16 +60,7 @@ public class PropertyService {
         else
             throw new EnumException(EnumErrorCode.ENUM_INVALID_STRING);
 
-        PropertyListResponseDto response = new PropertyListResponseDto((long) propertyList.size());
-
-        // dto 변환
-        for (Property property : propertyList) {
-            List<String> tags = tagRepository.findAllByProperty(property).stream().map(Tag::getName).collect(Collectors.toList());
-            PropertyImage thumbnail = propertyImageRepository.findThumbnail(property)
-                    .orElseThrow(() -> new PropertyException(PropertyErrorCode.THUMBNAIL_NOT_FOUND));
-            response.getProperties().add(PropertyResponseInList.toDto(property, tags, thumbnail.getUrl()));
-        }
-        return response;
+        return getPropertyListResponseDto(propertyList);
     }
 
     @Transactional
@@ -147,4 +136,18 @@ public class PropertyService {
                 landlord
         );
     }
+
+    private PropertyListResponseDto getPropertyListResponseDto(List<Property> propertyList) {
+        PropertyListResponseDto response = new PropertyListResponseDto((long) propertyList.size());
+
+        // dto 변환
+        for (Property property : propertyList) {
+            List<String> tags = tagRepository.findAllByProperty(property).stream().map(Tag::getName).collect(Collectors.toList());
+            PropertyImage thumbnail = propertyImageRepository.findThumbnail(property)
+                    .orElseThrow(() -> new PropertyException(PropertyErrorCode.THUMBNAIL_NOT_FOUND));
+            response.getProperties().add(PropertyResponseInList.toDto(property, tags, thumbnail.getUrl()));
+        }
+        return response;
+    }
+
 }

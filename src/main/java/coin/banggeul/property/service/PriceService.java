@@ -1,9 +1,6 @@
 package coin.banggeul.property.service;
 
 import coin.banggeul.property.domain.RentalType;
-import coin.banggeul.property.domain.RoomType;
-import coin.banggeul.property.exception.PropertyErrorCode;
-import coin.banggeul.property.exception.PropertyException;
 import coin.banggeul.property.openapi.apt.AptItem;
 import coin.banggeul.property.openapi.apt.OpenApiResponseApt;
 import coin.banggeul.property.openapi.other.OpenApiResponseOther;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -49,7 +45,6 @@ public class PriceService {
     public String getOfficetelPrice(RentalType rentalType, String code, String date) throws IOException {
         List<OtherItem> items = parseOtherJson(getResponse(officetelUrl, code, date));
         return getAverage(rentalType, items);
-
     }
 
     @Transactional
@@ -81,9 +76,6 @@ public class PriceService {
     }
 
     private String getResponse(String url, String code, String date) {
-
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
 
         URI uri = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("LAWD_CD", code)

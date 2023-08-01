@@ -47,8 +47,6 @@ public class PropertyController {
     @GetMapping("/info")
     public BasicResponse<PropertyResponse> getPropertyInfo(@RequestParam Long id) throws IOException, SAXException {
         PropertyResponse propertyInfo = propertyService.getPropertyInfo(id);
-
         return ResponseUtil.success(propertyInfo);
-        // TODO: 부동산 시세 연결해서 합치기
     }
 }

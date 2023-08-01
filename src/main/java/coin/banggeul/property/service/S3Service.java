@@ -20,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -50,7 +48,7 @@ public class S3Service {
         }
     }
 
-    public String uploadImage(MultipartFile multipartFile) {
+    private String uploadImage(MultipartFile multipartFile) {
         String originalFilename = multipartFile.getOriginalFilename();
         String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         String storeFileName = UUID.randomUUID() + "." + ext;
