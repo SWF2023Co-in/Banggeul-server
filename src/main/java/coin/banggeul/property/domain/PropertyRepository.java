@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface PropertyRepository extends JpaRepository<Property, Long> {
+public interface PropertyRepository extends JpaRepository<Property, Long>, PropertyCustomRepository {
 
     @Query(value = "select p from Property p where p.address.bcode = :bcode and p.roomType = :homeType")
     List<Property> findAllByBcodeAndHomeType(String bcode, RoomType homeType);
