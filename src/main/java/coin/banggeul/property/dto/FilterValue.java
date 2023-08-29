@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FilterValue {
 
+    private String rentalType;
     private String homeType;
     private Long areaMin;
     private Long areaMax;
