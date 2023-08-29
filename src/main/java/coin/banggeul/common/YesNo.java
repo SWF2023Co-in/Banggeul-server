@@ -20,7 +20,7 @@ public enum YesNo {
     @JsonProperty("YES")
     YES("YES"),
 
-    @JsonProperty("N")
+    @JsonProperty("NO")
     NO("NO");
 
     @JsonValue
@@ -28,7 +28,7 @@ public enum YesNo {
 
     public static YesNo of(String name) {
         return Arrays.stream(YesNo.values())
-                .filter(r -> r.getCode().equals(name))
+                .filter(r -> r.getCode().equals(name.toUpperCase()))
                 .findAny()
                 .orElseThrow(() -> new EnumException(ENUM_INVALID_STRING));
     }
