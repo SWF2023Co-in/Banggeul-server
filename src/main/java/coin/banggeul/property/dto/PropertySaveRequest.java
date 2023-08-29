@@ -25,7 +25,7 @@ public class PropertySaveRequest {
     private String homeType;
     @NotBlank
     private String roadNameAddress;
-    @NotBlank
+    @NotNull
     private String lotNumberAddress;
     @NotBlank
     private String bcode;
