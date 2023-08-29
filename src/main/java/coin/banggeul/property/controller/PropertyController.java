@@ -7,7 +7,6 @@ import coin.banggeul.property.domain.Property;
 import coin.banggeul.property.dto.PropertyListResponseDto;
 import coin.banggeul.property.dto.PropertyResponse;
 import coin.banggeul.property.dto.PropertySaveRequest;
-import coin.banggeul.property.service.PriceService;
 import coin.banggeul.property.service.PropertyService;
 import coin.banggeul.property.service.S3Service;
 import jakarta.validation.Valid;
