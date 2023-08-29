@@ -35,7 +35,6 @@ public class PropertySaveRequest {
     // STEP 2
     @NotNull
     private Double deposit;
-    @NotNull
     private Double rentalFee;
     @NotBlank
     private String structure;
@@ -55,6 +54,7 @@ public class PropertySaveRequest {
 
     @NotNull
     private Double area;
+    @NotNull
     private Long buildingFloor;
     @NotNull
     private Long roomFloor;
