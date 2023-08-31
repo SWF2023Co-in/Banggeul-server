@@ -1,5 +1,6 @@
 package coin.banggeul.property.repository;
 
+import coin.banggeul.common.YesNo;
 import coin.banggeul.property.domain.*;
 import coin.banggeul.property.dto.FilterValue;
 import com.querydsl.core.BooleanBuilder;
@@ -23,7 +24,11 @@ public class PropertyRepositoryImpl implements PropertyCustomRepository {
 
         return query
                 .selectFrom(qProperty)
-                .where()
+                .where(rentalTypeEq(filter.getRentalType()),
+                        homeTypeEq(filter.getHomeType()),
+                        areaInRange(filter.getAreaMin(), filter.getAreaMax()),
+                        depositInRange(filter.getDepositMin(), filter.getDepositMax())
+                )
                 .fetch();
     }
 
@@ -45,13 +50,24 @@ public class PropertyRepositoryImpl implements PropertyCustomRepository {
     }
 
     private Double toM2(Long pyeong) {
-        return Double.parseDouble(String.format(".2f", pyeong/3.3));
+        return Double.parseDouble(String.format("%.2f", pyeong/3.3));
+    }
+
+    private Predicate depositInRange(Double depositMin, Double depositMax) {
+        if (depositMin == null || depositMax == null)
+            return null;
+        return qProperty.deposit.between(depositMin, depositMax);
     }
 
     private Predicate optionsExisted(List<String> options) {
         if (options == null)
             return null;
-        return qProperty.options.isNotNull();
+        Predicate query = null;
+        for (String option : options) {
+            //
+        }
+        return qProperty.options.airConditioner.eq(YesNo.YES)
+                .and(qProperty.options.bed.eq(YesNo.YES));
     }
 
 }
