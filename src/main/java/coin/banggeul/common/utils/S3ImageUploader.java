@@ -56,7 +56,7 @@ public class S3ImageUploader {
             PropertyImageSaveDto saveDto = meta.stream().filter(dto -> dto.getFileName().equals(file.getOriginalFilename())).findFirst()
                     .orElseThrow(() -> new S3Exception(S3ErrorCode.IMAGE_FILE_NAME_NOT_MATCHED));
             String url = uploadImage(file);
-            PropertyImage imageEntity = PropertyImageSaveDto.toEntity(saveDto.getFileName(), url, saveDto.getIndex(), property);
+            PropertyImage imageEntity = saveDto.toEntity( url, property);
             propertyImageRepository.save(imageEntity);
         }
     }
