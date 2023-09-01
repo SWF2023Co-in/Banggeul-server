@@ -34,10 +34,10 @@ public class PropertyService {
     private final PriceService priceService;
 
     @Transactional
-    public Property registerProperty(Member landlord, PropertySaveRequest dto) {
+    public Long registerProperty(Member landlord, PropertySaveRequest dto) {
         Property property = propertyRepository.save(getPropertyWithLandlord(landlord, dto));
         dto.getTags().forEach(tag -> tagRepository.save(new Tag(tag, property)));
-        return property;
+        return property.getId();
     }
 
     @Transactional

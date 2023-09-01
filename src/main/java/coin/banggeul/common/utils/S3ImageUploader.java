@@ -1,11 +1,7 @@
-package coin.banggeul.property.service;
+package coin.banggeul.common.utils;
 
 import coin.banggeul.auth.exception.S3ErrorCode;
 import coin.banggeul.auth.exception.S3Exception;
-import coin.banggeul.property.domain.Property;
-import coin.banggeul.property.domain.PropertyImage;
-import coin.banggeul.property.domain.PropertyImageRepository;
-import coin.banggeul.property.dto.PropertyImageSaveDto;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -13,46 +9,43 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
-public class S3Service {
+public class S3ImageUploader {
 
-    private final PropertyImageRepository propertyImageRepository;
     private final AmazonS3Client amazonS3Client;
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+    private static final String PROPERTIES_PATH = "properties/";
 
     @Transactional
-    public void saveImages(Property property, List<PropertyImageSaveDto> meta, List<MultipartFile> files) {
-        log.info("meta size: {}, multipart file size: {}", meta.size(), files.size());
-        if (meta.size() == 0)
-            return;
-        for (MultipartFile file: files) {
+    public List<String> uploadImages(List<MultipartFile> files) {
+        ArrayList<String> urls = new ArrayList<>();
+        if (files.size() == 0)
+            return urls;
+        files.forEach(file -> {
             log.info("file name: {}", file.getOriginalFilename());
-            PropertyImageSaveDto saveDto = meta.stream().filter(dto -> dto.getFileName().equals(file.getOriginalFilename())).findFirst()
-                    .orElseThrow(() -> new S3Exception(S3ErrorCode.IMAGE_FILE_NAME_NOT_MATCHED));
-            String url = uploadImage(file);
-            PropertyImage imageEntity = PropertyImageSaveDto.toEntity(saveDto.getFileName(), url, saveDto.getIndex(), property);
-            propertyImageRepository.save(imageEntity);
-        }
+            urls.add(uploadPropertyImage(file));
+        });
+        return urls;
     }
 
-    private String uploadImage(MultipartFile multipartFile) {
+    private String uploadPropertyImage(MultipartFile multipartFile) {
         String originalFilename = multipartFile.getOriginalFilename();
         String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         String storeFileName = UUID.randomUUID() + "." + ext;
-        String key = "properties/" + storeFileName;
+        String key = PROPERTIES_PATH + storeFileName;
 
         return putObject(multipartFile, key);
     }
