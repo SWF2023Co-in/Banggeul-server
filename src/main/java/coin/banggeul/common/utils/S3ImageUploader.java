@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +33,18 @@ public class S3ImageUploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+
+    @Transactional
+    public List<String> uploadImages(List<MultipartFile> files) {
+        ArrayList<String> urls = new ArrayList<>();
+        if (files.size() == 0)
+            return urls;
+        files.forEach(file -> {
+            log.info("file name: {}", file.getOriginalFilename());
+            urls.add(uploadImage(file));
+        });
+        return urls;
+    }
 
     @Transactional
     public void saveImages(Property property, List<PropertyImageSaveDto> meta, List<MultipartFile> files) {

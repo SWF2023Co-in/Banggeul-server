@@ -18,4 +18,8 @@ public class PropertyImageSaveDto {
     public static PropertyImage toEntity(String originalName, String url, Long index, Property property) {
         return new PropertyImage(originalName, url, index, property);
     }
+
+    public int compareTo(PropertyImageSaveDto obj) {
+        return (int) (this.index - obj.getIndex());
+    }
 }
