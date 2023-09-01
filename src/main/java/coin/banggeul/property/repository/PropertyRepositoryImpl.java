@@ -20,14 +20,13 @@ public class PropertyRepositoryImpl implements PropertyCustomRepository {
 
     @Override
     public List<Property> findAllWithFilter(FilterValue filter) {
-        BooleanBuilder builder = new BooleanBuilder();
-
         return query
                 .selectFrom(qProperty)
                 .where(rentalTypeEq(filter.getRentalType()),
                         homeTypeEq(filter.getHomeType()),
                         areaInRange(filter.getAreaMin(), filter.getAreaMax()),
                         depositInRange(filter.getDepositMin(), filter.getDepositMax()),
+                        rentalFeeInRange(filter.getMonthlyMin(), filter.getMonthlyMax()),
                         optionsExisted(filter.getOptions())
                 )
                 .fetch();
@@ -58,6 +57,12 @@ public class PropertyRepositoryImpl implements PropertyCustomRepository {
         if (depositMin == null || depositMax == null)
             return null;
         return qProperty.deposit.between(depositMin, depositMax);
+    }
+
+    private Predicate rentalFeeInRange(Double monthlyMin, Double monthlyMax) {
+        if (monthlyMin == null || monthlyMax == null)
+            return null;
+        return qProperty.rentalFee.between(monthlyMin, monthlyMax);
     }
 
     private Predicate optionsExisted(List<String> options) {
