@@ -27,7 +27,8 @@ public class PropertyRepositoryImpl implements PropertyCustomRepository {
                 .where(rentalTypeEq(filter.getRentalType()),
                         homeTypeEq(filter.getHomeType()),
                         areaInRange(filter.getAreaMin(), filter.getAreaMax()),
-                        depositInRange(filter.getDepositMin(), filter.getDepositMax())
+                        depositInRange(filter.getDepositMin(), filter.getDepositMax()),
+                        optionsExisted(filter.getOptions())
                 )
                 .fetch();
     }
@@ -62,12 +63,28 @@ public class PropertyRepositoryImpl implements PropertyCustomRepository {
     private Predicate optionsExisted(List<String> options) {
         if (options == null)
             return null;
-        Predicate query = null;
+        BooleanBuilder query = new BooleanBuilder();
         for (String option : options) {
-            //
+            query.and(matchOption(option));
         }
-        return qProperty.options.airConditioner.eq(YesNo.YES)
-                .and(qProperty.options.bed.eq(YesNo.YES));
+        return query;
+    }
+
+    private Predicate matchOption(String option) {
+        return switch (option) {
+            case "airConditioner" -> qProperty.options.airConditioner.eq(YesNo.YES);
+            case "fridge" -> qProperty.options.fridge.eq(YesNo.YES);
+            case "laundry" -> qProperty.options.laundry.eq(YesNo.YES);
+            case "induction" -> qProperty.options.induction.eq(YesNo.YES);
+            case "gasStove" -> qProperty.options.gasStove.eq(YesNo.YES);
+            case "microwave" -> qProperty.options.microwave.eq(YesNo.YES);
+            case "desk" -> qProperty.options.desk.eq(YesNo.YES);
+            case "bookshelf" -> qProperty.options.bookshelf.eq(YesNo.YES);
+            case "bed" -> qProperty.options.bed.eq(YesNo.YES);
+            case "closet" -> qProperty.options.closet.eq(YesNo.YES);
+            case "sink" -> qProperty.options.sink.eq(YesNo.YES);
+            default -> null;
+        };
     }
 
 }
