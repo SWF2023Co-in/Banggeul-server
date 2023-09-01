@@ -104,6 +104,7 @@ public class PropertySaveRequest {
     private String message;
     private List<String> tags;
 
+    @NotNull
     private List<PropertyImageSaveDto> images;
 
     public static Property toEntity(RentalType rentalType,
