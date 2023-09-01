@@ -1,4 +1,4 @@
-package coin.banggeul.property.service;
+package coin.banggeul.common.utils;
 
 import coin.banggeul.auth.exception.S3ErrorCode;
 import coin.banggeul.auth.exception.S3Exception;
@@ -13,7 +13,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
-public class S3Service {
+public class S3ImageUploader {
 
     private final PropertyImageRepository propertyImageRepository;
     private final AmazonS3Client amazonS3Client;

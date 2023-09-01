@@ -8,7 +8,7 @@ import coin.banggeul.property.dto.PropertyListResponseDto;
 import coin.banggeul.property.dto.PropertyResponse;
 import coin.banggeul.property.dto.PropertySaveRequest;
 import coin.banggeul.property.service.PropertyService;
-import coin.banggeul.property.service.S3Service;
+import coin.banggeul.common.utils.S3ImageUploader;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +26,12 @@ import java.util.List;
 public class PropertyController {
     private final PropertyService propertyService;
     private final MemberService memberService;
-    private final S3Service s3Service;
+    private final S3ImageUploader s3ImageUploader;
 
     @PostMapping
     public BasicResponse<String> createProperty(@RequestPart List<MultipartFile> files, @RequestPart @Valid PropertySaveRequest request) {
         Property property = propertyService.registerProperty(memberService.findCurrentMember(), request);
-        s3Service.saveImages(property, request.getImages(), files);
+        s3ImageUploader.saveImages(property, request.getImages(), files);
         return ResponseUtil.success("매물 등록 성공");
     }
 
