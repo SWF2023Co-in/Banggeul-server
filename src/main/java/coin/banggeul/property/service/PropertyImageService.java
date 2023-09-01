@@ -4,19 +4,20 @@ import coin.banggeul.auth.exception.S3ErrorCode;
 import coin.banggeul.auth.exception.S3Exception;
 import coin.banggeul.common.utils.S3ImageUploader;
 import coin.banggeul.property.domain.Property;
-import coin.banggeul.property.domain.PropertyImage;
 import coin.banggeul.property.domain.PropertyImageRepository;
 import coin.banggeul.property.domain.PropertyRepository;
 import coin.banggeul.property.dto.PropertyImageSaveDto;
 import coin.banggeul.property.exception.PropertyErrorCode;
 import coin.banggeul.property.exception.PropertyException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PropertyImageService {
@@ -33,6 +34,7 @@ public class PropertyImageService {
 
     private void validateDtoList(List<PropertyImageSaveDto> dtoList, List<MultipartFile> files) {
         dtoList.sort(PropertyImageSaveDto::compareTo);
+        log.info("dtoList size: {}, multipart file size: {}", dtoList.size(), files.size());
         for (PropertyImageSaveDto dto : dtoList) {
             files.stream().filter(file -> file.getOriginalFilename().equals(dto.getFileName())).findFirst()
                     .orElseThrow(() -> new S3Exception(S3ErrorCode.IMAGE_FILE_NAME_NOT_MATCHED));
